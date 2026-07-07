@@ -1,0 +1,15 @@
+#! rollbacks slice — a self-contained trust boundary for the rollback capability. The closed type, the
+#! extract boundary, and the attenuated irreversible sink all live here, so this feature's
+#! whole taint -> trust -> effect story is one file. Privilege is centralized in
+#! capabilities.eide and attenuated here to just rollback via using (least authority).
+#! @taint bridge — extract<RollbackCmd> turns the tainted body into a trusted command
+import capabilities
+
+type Target = Last | Pinned
+type RollbackCmd = Rollback(Target) | Keep
+
+fn rollbackHandle() {
+  let body = fetch<web>  # UNTRUSTED body — tainted
+  quarantined { let decision = extract<RollbackCmd>(body) confidence 60 }
+  using rollback { commit { rollback(decision) } }  # attenuated to rollback; irreversible
+}
