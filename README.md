@@ -11,11 +11,11 @@ privilege **centralized** in one module, each feature a **vertical slice** that 
 its own trust boundary, and an injection-safe router.
 
 ```
-main.os           import router; route()
-  router.os       the route selector is UNTRUSTED -> extract<Endpoint> -> match -> slice
-  deploys.os          feature slice: closed type + quarantined { extract } + using release { commit }
-  rollbacks.os          feature slice: closed type + quarantined { extract } + using rollback { commit }
-  capabilities.os EVERY grant (the whole privileged surface) + the program budget
+main.wave           import router; route()
+  router.wave       the route selector is UNTRUSTED -> extract<Endpoint> -> match -> slice
+  deploys.wave          feature slice: closed type + quarantined { extract } + using release { commit }
+  rollbacks.wave          feature slice: closed type + quarantined { extract } + using rollback { commit }
+  capabilities.wave EVERY grant (the whole privileged surface) + the program budget
 ```
 
 - **Capabilities (centralized):** `release`, `rollback` — all grants in one auditable file, each irreversible with a cost + confidence floor, bounded by `budget 100`.
@@ -36,16 +36,16 @@ examples/services/deploy-gate/demo.sh
 ```
 
 Proves `SAFE`, runs both routes, and rejects an injected route at the boundary (exit 3).
-The `unsafe.os` variant — which imports the centralized capabilities and calls a sink
+The `unsafe.wave` variant — which imports the centralized capabilities and calls a sink
 with untrusted data directly — proves `UNSAFE`: the checker follows taint **across
 modules**, so neither layering nor centralizing can hide misuse from it.
 
 ## Files
 
-- `capabilities.os` — the centralized privileged surface (grants + budget).
-- `deploys.os` / `rollbacks.os` — the feature slices (each a self-contained trust boundary).
-- `router.os` — injection-safe dispatch (extracts the untrusted route).
-- `main.os` — entry point · `unsafe.os` — the negative example · `ondos.toml` — the manifest.
+- `capabilities.wave` — the centralized privileged surface (grants + budget).
+- `deploys.wave` / `rollbacks.wave` — the feature slices (each a self-contained trust boundary).
+- `router.wave` — injection-safe dispatch (extracts the untrusted route).
+- `main.wave` — entry point · `unsafe.wave` — the negative example · `ondos.toml` — the manifest.
 
 ---
 
